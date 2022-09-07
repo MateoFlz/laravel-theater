@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PagesController;
+use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\SeatController;
+use App\Models\Seat;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +18,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::controller(PagesController::class)->group(function () {
+
+    Route::get('/',        'bokings')->name('bokings');
+    Route::get('partners', 'partners')->name('partners');
+    Route::get('seats',    'seats')->name('seats');
 });
+
+Route::resource('partner', PartnerController::class)->except(['show']);
+Route::resource('seat',    SeatController::class)->except(['index','show']);
+
+Route::controller(BookingController::class)->group(function () {
+
+    Route::get('bokings/{seat}', 'save')->name('boking.save');
+
+});
+
+
