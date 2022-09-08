@@ -45,7 +45,7 @@ class BookingController extends Controller
         $seats = Seat::all();
         return redirect()->route('bokings', [
             'seats'   => $seats
-        ]);
+        ])->with('message', 'Reserva creada satifactoriamente');
 
     }
 

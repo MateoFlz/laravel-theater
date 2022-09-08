@@ -27,6 +27,12 @@
                     <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Buscar</button>
                 </div>
             </form>
+            @if (session()->has('message'))
+            <div class="alert alert-success alert-dismissible" role="alert">
+                {{ session('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
             @if (session()->has('partner'))
             <div class="card">
                 <div class="card-header">
