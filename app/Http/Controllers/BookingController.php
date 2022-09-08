@@ -28,16 +28,25 @@ class BookingController extends Controller
 
     public function create(Booking $booking)
     {
-        return view('booking.create', [
-            'booking' => $booking
-        ]);
+
     }
 
 
     public function store(StoreBookingRequest $request)
     {
-    
-        dd($request->all());
+
+        Booking::create([
+
+            "partner_id" => $request->partner_id,
+            "date"       => $request->date,
+            "state"      => $request->state
+        ]);
+
+        $seats = Seat::all();
+        return redirect()->route('bokings', [
+            'seats'   => $seats
+        ]);
+
     }
 
 

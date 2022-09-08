@@ -30,8 +30,9 @@ Route::resource('seat',    SeatController::class)->except(['index','show']);
 
 Route::controller(BookingController::class)->group(function () {
 
-    Route::get('bokings/{seat}',  'save')->name('boking.save');
+    Route::get('bokings/{seat}',      'save')->name('boking.save');
     Route::get('bokings/{id}/delete', 'delete')->name('boking.delete');
+    Route::post('bokings',            'store')->name('boking.store');
 
 });
 

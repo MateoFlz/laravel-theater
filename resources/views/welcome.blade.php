@@ -30,8 +30,37 @@
             @if (session()->has('partner'))
             <div class="card">
                 <div class="card-header">
-                    <strong>Dni: </strong>{{ session('partner')->dni }}
-                    <strong>Nombre: </strong>{{ session('partner')->name }} {{ session('partner')->surnames }}
+                    <div class="mb-3 row">
+                        <label for="dni" class="col-sm-1 col-form-label"><strong>Dni: </strong></label>
+                        <div class="col-sm-11">
+                        <input type="text" class="form-control" id="dni" value="{{ session('partner')->dni }}" readonly>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="name" class="col-sm-1 col-form-label"><strong>Nombre: </strong></label>
+                        <div class="col-sm-11">
+                        <input type="text" readonly class="form-control" value="{{ session('partner')->name }} {{ session('partner')->surnames }}">
+                        </div>
+                    </div>
+                    <form action="{{ route('boking.store') }}" method="post">
+                        @method('post')
+                        @csrf
+                        <input type="hidden" name="partner_id" value="{{ session('partner')->id }}">
+                        <input type="hidden" name="state" value="1">
+                        <div class="mb-3 row">
+                            <label for="date" class="col-sm-1 col-form-label"><strong>Fecha: </strong></label>
+                            <div class="col-sm-11">
+                            <input type="date" class="form-control " name="date" value="{{ date('Y-m-d') }}">
+                        </div>
+                        @if (session()->has('seat'))
+                            @if (count(session('seat')) > 0)
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-success">Realizar reserva</button>
+                            </div>
+                            @endif
+                        @endif
+                    </form>
+
                 </div>
                 <div class="card-body">
                 @if (session()->has('seat'))
@@ -45,9 +74,6 @@
                         </button>
                    </form>
                    @endforeach
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-success">Realizar reserva</button>
                 </div>
                 @endif
                 </div>
