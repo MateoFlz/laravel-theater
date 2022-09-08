@@ -19,4 +19,14 @@ class Seat extends Model
         'position_y'
     ];
 
+    public function booking()
+    {
+        return $this->belongsToMany(
+
+            Booking::class,
+            'bookings_seats',
+            'seat_id',
+            'booking_id'
+        );
+    }
 }

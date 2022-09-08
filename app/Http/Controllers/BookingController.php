@@ -3,15 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Booking\StoreBookingRequest;
+use App\Http\Requests\Booking\UpdateBookingRequest;
 use App\Models\Booking;
-use App\Models\BookingSeat;
+use App\Models\BookingsSeat;
 use App\Models\Seat;
 use App\Services\BookingService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class BookingController extends Controller
 {
+
+
+    public function index()
+    {
+        Session::flush();
+
+        $booking = Booking::latest()->get();
+        return view('booking.index',[
+            'bookings' => $booking
+        ]);
+    }
+
 
     public function save(Seat $seat)
     {
@@ -24,13 +36,6 @@ class BookingController extends Controller
             'seats'   => $seats
         ]);
     }
-
-
-    public function create(Booking $booking)
-    {
-
-    }
-
 
     public function store(StoreBookingRequest $request)
     {
@@ -52,15 +57,29 @@ class BookingController extends Controller
 
     public function edit(Booking $booking)
     {
+
+
+        $seats       = Seat::all();
+        $bookingseat = BookingsSeat::where('state', 1)->get();
+
         return view('booking.edit', [
-            'booking' => $booking
+
+            'booking'     => $booking,
+            'seats'       => $seats,
+            'bookingseat' => $bookingseat
         ]);
     }
 
 
-    public function update(StoreBookingRequest $request)
+    public function update(UpdateBookingRequest $request, Booking $booking)
     {
 
+        $booking->update([
+            'date'  => $request->date,
+            'state' => $request->state
+        ]);
+
+        return back()->with('message', 'Reserva editada satifactoriamente');
     }
 
     public function delete($id)
@@ -85,6 +104,6 @@ class BookingController extends Controller
     public function destroy(Booking $booking)
     {
         $booking->delete();
-        return back();
+        return back()->with('message', 'Reserva eliminada');
     }
 }

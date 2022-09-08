@@ -4,6 +4,7 @@
     <div class="d-flex">
         <div class="p-2 flex-grow-1">Sistema de reserva</div>
         <div class="p-2"><a href="{{ route('partners') }}">Socio</a></div>
+        <div class="p-2"><a href="{{ route('boking.index') }}">Reservas</a></div>
         <div class="p-2"><a href="{{ route('seat.create') }}">Butacas</a></div>
     </div>
 

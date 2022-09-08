@@ -20,4 +20,23 @@ class Booking extends Model
         'state'
     ];
 
+
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
+
+    public function seat()
+    {
+        return $this->belongsToMany(
+            
+            Seat::class,
+            'bookings_seats',
+            'booking_id',
+            'seat_id'
+        );
+    }
+
+
 }

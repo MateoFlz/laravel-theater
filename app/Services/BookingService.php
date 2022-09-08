@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Booking;
 use App\Models\BookingsSeat;
 use App\Models\Seat;
 use Illuminate\Support\Facades\Session;
@@ -66,5 +67,15 @@ class BookingService
     public static function validateByPartner()
     {
         return !session()->has('partner');
+    }
+
+    public static function validateByBooking(Booking $booking, $id)
+    {
+        $bookingSeat = BookingsSeat::where('seat_id', $id)
+        ->where('state', 1)
+        ->first();
+
+        if($bookingSeat)  return true;
+        return false;
     }
 }
