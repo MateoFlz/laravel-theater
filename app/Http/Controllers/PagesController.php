@@ -17,12 +17,14 @@ class PagesController extends Controller
 
     public function bokings()
     {
+
         Session::forget('seat');
-        
+        Session::forget('partner');
+        Session::forget('errors');
+
         $seats = Seat::all();
         return view('welcome', [
-            'seats'   => $seats,
-            'partner' => '',
+            'seats'   => $seats
         ]);
     }
 

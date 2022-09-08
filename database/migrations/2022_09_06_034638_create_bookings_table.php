@@ -18,8 +18,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('partner_id');
             $table->foreign('partner_id')
-            ->references('partners')
-            ->on('id')
+            ->references('id')
+            ->on('partners')
             ->onDelete('cascade')
             ->onUpdate('cascade');
 

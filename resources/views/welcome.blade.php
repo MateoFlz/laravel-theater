@@ -27,22 +27,37 @@
                     <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Buscar</button>
                 </div>
             </form>
-            @if($partner)
+            @if (session()->has('partner'))
             <div class="card">
                 <div class="card-header">
-                    <strong>DNI: </strong>{{ $partner->dni }}
-                    <strong>Nombre: </strong>{{ $partner->name }}
+                    <strong>Dni: </strong>{{ session('partner')->dni }}
+                    <strong>Nombre: </strong>{{ session('partner')->name }} {{ session('partner')->surnames }}
                 </div>
                 <div class="card-body">
-
-                    <span class="badge bg-secondary p-1 m-0 fs-5" role='button'>1-1</span>
+                @if (session()->has('seat'))
+                <div class="d-flex flex-wrap" role="group" aria-label="Basic example">
+                   @foreach(session('seat') as $value)
+                   <form action="{{ route('boking.delete', $value['id_seat']) }}" method="get">
+                        <button class="btn btn-secondary  btn-sm p-1 m-1 fs-6" role='button'>{{ $value['position'] }}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                              </svg>
+                        </button>
+                   </form>
+                   @endforeach
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-success">Realizar reserva</button>
+                </div>
+                @endif
                 </div>
             </div>
             @endif
 
-            @if (session()->has('seat'))
-            <div class="alert alert-success" role="alert">
-               {{-- {{ dd(session('seat')) }} --}}
+            @if (session()->has('errors'))
+            <div class="alert alert-danger alert-dismissible m-2" role="alert">
+                {{ session('errors') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             @endif
 
@@ -50,12 +65,7 @@
     </div>
     <div class="d-flex flex-wrap">
         @foreach($seats as $seat)
-
-        <a href=" {{ route('boking.save', $seat) }}" class="badge bg-secondary p-4 m-3 fs-3" role='button' type="submit">{{ $seat->position_x }}-{{ $seat->position_y }}</a>
-        <!-- <form action="{{ route('boking.save', $seat) }}" method="get" id="saveboking">
-            @csrf
-            <span class="badge bg-secondary p-4 m-3 fs-3" role='button' type="submit" onclick="saveboking.submit()">{{ $seat->position_x }}-{{ $seat->position_y }}</span>
-        </form> -->
+            <a href=" {{ route('boking.save', $seat) }}" class="badge bg-secondary p-4 m-3 fs-3" role='button' type="submit">{{ $seat->position_x }}-{{ $seat->position_y }}</a>
         @endforeach
     </div>
 </div>

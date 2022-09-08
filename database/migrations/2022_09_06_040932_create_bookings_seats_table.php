@@ -18,15 +18,15 @@ return new class extends Migration
 
             $table->unsignedBigInteger('booking_id');
             $table->foreign('booking_id')
-            ->references('bookings')
-            ->on('id')
+            ->references('id')
+            ->on('bookings')
             ->onDelete('cascade')
             ->onUpdate('cascade');
 
             $table->unsignedBigInteger('seat_id');
             $table->foreign('seat_id')
-            ->references('seats')
-            ->on('id')
+            ->references('id')
+            ->on('seats')
             ->onDelete('cascade')
             ->onUpdate('cascade');
 

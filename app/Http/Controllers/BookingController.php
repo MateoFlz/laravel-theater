@@ -4,66 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Models\Booking;
+use App\Models\BookingSeat;
 use App\Models\Seat;
+use App\Services\BookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class BookingController extends Controller
 {
 
-    public function obtener()
-    {
-        $seats=session('seat');
-        if (!$seats) {
-            $seats=[];
-        }
-        return $seats;
-    }
-
-    public function guardar($seats)
-    {
-     session(["seats"=>$seats]);
-    }
-
-
-
     public function save(Seat $seat)
     {
+        Session::forget('errors');
 
+        BookingService::validateBySeat($seat);
 
-
-
-        // $seats=$this->obtener();
-        // $json= ['id_seat' => $seat->id,
-        // 'position' => $seat->position_x . '-' . $seat->position_y];
-        // array_push($seats,$json);
-
-        var_dump(session()->has('seat'));
-        // exit();
-
-        if(session()->has('seat')) {
-            Session::push(
-                'seat', [
-                    'id_seat' => $seat->id,
-                    'position' => $seat->position_x . '-' . $seat->position_y
-                ]
-            );
-
-        } else {
-            Session::put('seat', [
-                'id_seat' => $seat->id,
-                'position' => $seat->position_x . '-' . $seat->position_y
-            ]);
-
-
-        }
-
-        var_dump(session('seat'));
-
-        $seats   = Seat::all();
+        $seats = Seat::all();
         return view('welcome', [
-            'seats'   => $seats,
-            'partner' => '',
+            'seats'   => $seats
         ]);
     }
 
@@ -78,13 +36,7 @@ class BookingController extends Controller
 
     public function store(StoreBookingRequest $request)
     {
-        // Partner::create([
-        //     'dni'      => '',
-        //     'name'     => '',
-        //     'surnames' => '',
-        //     'date'     => ''
-        // ]);
-
+    
         dd($request->all());
     }
 
@@ -99,6 +51,24 @@ class BookingController extends Controller
 
     public function update(StoreBookingRequest $request)
     {
+
+    }
+
+    public function delete($id)
+    {
+        $array = [];
+        foreach(session('seat') as $key => $value) {
+
+            if (!array_search($id, session('seat')[$key])){
+                array_push($array, session('seat')[$key]);
+            };
+        }
+        session(['seat' => $array]);
+
+       $seats = Seat::all();
+        return view('welcome', [
+            'seats'   => $seats
+        ]);
 
     }
 
