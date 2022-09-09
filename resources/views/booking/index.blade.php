@@ -25,9 +25,7 @@
                 </div>
                 <div class="p-2"><a class="btn btn-light" href="{{ route('boking.edit', $booking)}}">Editar</a></div>
                 <div class="p-2">
-                    <form action="{{ route('boking.destroy', $booking) }}" method="post">
-                        @csrf
-                        @method('DELETE')
+                    <form action="{{ route('boking.destroy', $booking) }}" method="get">
                         <button class="btn btn-danger" onclick="return confirm('Desea eliminar esta reserva?')">Eliminar</button>
                     </form>
                 </div>

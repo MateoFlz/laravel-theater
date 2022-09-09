@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Seat\StoreSeatRequest;
+use App\Models\Booking;
 use App\Models\Seat;
 use Illuminate\Http\Request;
 
@@ -47,16 +48,10 @@ class SeatController extends Controller
         ]);
     }
 
-
-    public function update(StoreSeatRequest $request)
-    {
-
-    }
-
-
     public function destroy(Seat $seat)
     {
-        $seat->delete();
+        Seat::getQuery()->delete();
+        Booking::getQuery()->delete();
         return back();
     }
 }

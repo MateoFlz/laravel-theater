@@ -39,7 +39,8 @@ class BookingObserver
      */
     public function updated(Booking $booking)
     {
-        //
+        BookingsSeat::where('booking_id', $booking->id)
+        ->delete();
     }
 
     /**

@@ -23,6 +23,11 @@
         <div class="alert alert-success" role="alert">
             Butacas creadas
         </div>
+        <form action="{{ route('seat.destroy', $seats) }}" method="post">
+            @csrf
+            @method('DELETE')
+            <button class="btn btn-danger" onclick="return confirm('Desea eliminar el salon de butacas?')">Eliminar salon de butacas</button>
+        </form>
     @endif
 </div>
 @endsection
