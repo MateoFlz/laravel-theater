@@ -1,24 +1,115 @@
-FROM php:fpm-buster
+FROM php:8.1.10-fpm
 
-WORKDIR /var/www/html/laravel-theater
-COPY . /var/www/html/laravel-theater/
+# Set working directory
+WORKDIR /var/www
+
+# Add docker php ext repo
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# Install php extensions
+RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
+    install-php-extensions mbstring pdo_mysql zip exif pcntl gd memcached
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    unzip \
+    git \
+    curl \
+    lua-zlib-dev \
+    libmemcached-dev \
+    nginx
 
 
-COPY .env.example /var/www/html/laravel-theater/.env
+# Install supervisor
+RUN apt-get install -y supervisor
 
-
-# algunas configuraciones para que funcione el contenedor
-RUN docker-php-ext-install pdo pdo_mysql
-
-# instala composer en el contenedor
+# Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-#run composer intalar vendor
-RUN composer install
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-CMD php artisan serve --host=0.0.0.0 --port=8181
-EXPOSE 8181
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
 
-# da permisos para editar los archivos en esta ruta del container
-RUN chown -R www-data:www-data /var/www
-RUN chmod 755 /var/www
+# Copy code to /var/www
+COPY --chown=www:www-data . /var/www
+
+# add root to www group
+RUN chmod -R ug+w /var/www/storage
+
+# Copy nginx/php/supervisor configs
+RUN cp docker/supervisor.conf /etc/supervisord.conf
+RUN cp docker/php.ini /usr/local/etc/php/conf.d/app.ini
+RUN cp docker/nginx.conf /etc/nginx/sites-enabled/default
+RUN cp .env.example /var/www/.env
+# PHP Error Log Files
+RUN mkdir /var/log/php
+RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
+
+# Deployment steps
+RUN composer install --optimize-autoloader --no-dev
+RUN chmod +x /var/www/docker/run.sh
+
+EXPOSE 80
+ENTRYPOINT ["/var/www/docker/run.sh"]
+
+# FROM php:latest
+
+
+# RUN apt-get update \
+#     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor
+# # algunas configuraciones para que funcione el contenedor
+# RUN docker-php-ext-install pdo pdo_mysql
+
+# # instala composer en el contenedor
+# RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+
+
+# WORKDIR /var/www/html/
+
+# # da permisos para editar los archivos en esta ruta del container
+# RUN chown -R www-data:www-data /var/www
+# RUN chmod 755 /var/www
+
+# COPY . /var/www/html/
+
+# COPY .env.example /var/www/html/.env
+# #run composer intalar vendor
+
+# ENV COMPOSER_ALLOW_SUPERUSER 1
+
+# RUN composer install
+
+# CMD php artisan migrate:refresh
+
+# FROM php:fpm-buster
+
+# WORKDIR /var/www/html/laravel-theater
+# COPY . /var/www/html/laravel-theater/
+
+
+# COPY .env.example /var/www/html/laravel-theater/.env
+
+
+# # algunas configuraciones para que funcione el contenedor
+# RUN docker-php-ext-install pdo pdo_mysql
+
+# # instala composer en el contenedor
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# #run composer intalar vendor
+# RUN composer install
+
+# CMD php artisan migrate
+# # da permisos para editar los archivos en esta ruta del container
+# RUN chown -R www-data:www-data /var/www
+# RUN chmod 755 /var/www

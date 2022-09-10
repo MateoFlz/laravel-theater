@@ -4,15 +4,15 @@ services:
         image: nginx:stable-alpine
         container_name: nginx # nombre para referirse al servicio
         ports:
-            - 8888:80 # puerto de mi pc:puerto del servicio
+            - 8000:80 # puerto de mi pc:puerto del servicio
         volumes:
-            - .:/var/www/html # carpeta local/ vincula a carpeta de nginx
-            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf # archivo local / reflejado en archivo de la imagen
+            - .:/var/www # carpeta local/ vincula a carpeta de nginx
+            - ./docker/nginx.conf:/etc/nginx/conf.d/nginx.conf # archivo local / reflejado en archivo de la imagen
         depends_on:
             - php
             - mysql
         networks:
-        - laravel
+        - default
 
     mysql: # 2do servici
         image: mysql:5.7 # imagen de docker hub
@@ -22,20 +22,14 @@ services:
         ports:
             - 33069:3306 # puerto local:puerto del servicio
         volumes:
-            - ./docker/mysql:/var/lib/mysql # carpeta local:carpeta de config de mysql
-            - ./docker/mysql/create-db.sh:/10-create-db.sh
+            - ./docker/db2:/var/lib/mysql # carpeta local:carpeta de config de mysql
         environment: # datos de configuracion del entorno
             MYSQL_DATABASE: laravel_theater  # importante que tengan comillas
-            MYSQL_PASSWORD: secret
             MYSQL_ROOT_PASSWORD: secret.root
             SERVICE_TAGS: dev
             SERVICE_NAME: mysql
         networks:
-            - laravel # red
-        healthcheck:
-            test: ["CMD", "mysqladmin", "ping"]
-            retries: 3
-            timeout: 5s
+            - default
 
     php: # 3er servicio
         build: # este se construira aqui mismo
@@ -43,11 +37,11 @@ services:
             dockerfile: Dockerfile # nombre del archivo de configuracion de la imagen
         container_name: php #
         volumes: # carpeta de proyecto local : carpeta del container que da vida a los archivos PHP
-            - ./:/var/www/html
+            - ./:/var/www
         ports:
             - 9000:80 # ya te la sabes 😉
         networks:
-            - laravel # red
+            - default # red
 
 networks: # declaracion de la red
-  laravel:
+  default:
