@@ -10,8 +10,9 @@
         <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
         <!-- Styles -->
-        @vite(['resources/js/app.js'])
-
+        {{-- @vite(['resources/js/app.js']) --}}
+        <link rel="stylesheet" href="{{ asset('app.build.css')}}">
+        <script src="{{ asset('app.build.js')}}"></script>
         <style>
             body {
                 font-family: 'Nunito', sans-serif;
