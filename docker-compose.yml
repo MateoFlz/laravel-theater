@@ -8,6 +8,8 @@ services:
         volumes:
             - .:/var/www # carpeta local/ vincula a carpeta de nginx
             - ./docker/nginx.conf:/etc/nginx/conf.d/nginx.conf # archivo local / reflejado en archivo de la imagen
+            - .env.example:/var/www/.env # archivo local / reflejado en archivo de la imagen
+            - /var/www/vendor
         depends_on:
             - php
             - mysql
@@ -22,12 +24,10 @@ services:
         ports:
             - 33069:3306 # puerto local:puerto del servicio
         volumes:
-            - ./docker/db2:/var/lib/mysql # carpeta local:carpeta de config de mysql
+            - ./docker/database:/var/lib/mysql # carpeta local:carpeta de config de mysql
         environment: # datos de configuracion del entorno
             MYSQL_DATABASE: laravel_theater  # importante que tengan comillas
             MYSQL_ROOT_PASSWORD: secret.root
-            SERVICE_TAGS: dev
-            SERVICE_NAME: mysql
         networks:
             - default
 
@@ -38,6 +38,10 @@ services:
         container_name: php #
         volumes: # carpeta de proyecto local : carpeta del container que da vida a los archivos PHP
             - ./:/var/www
+            - .env.example:/var/www/.env # archivo local / reflejado en archivo de la imagen
+            - /var/www/vendor
+        depends_on:
+            - mysql
         ports:
             - 9000:80 # ya te la sabes 😉
         networks:
