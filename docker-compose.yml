@@ -8,7 +8,7 @@ services:
         volumes:
             - .:/var/www # carpeta local/ vincula a carpeta de nginx
             - ./docker/nginx.conf:/etc/nginx/conf.d/nginx.conf # archivo local / reflejado en archivo de la imagen
-            - .env.example:/var/www/.env # archivo local / reflejado en archivo de la imagen
+            - .env.example:/var/www/.env # archivo env
             - /var/www/vendor
         depends_on:
             - php

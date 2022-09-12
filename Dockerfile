@@ -47,10 +47,13 @@ COPY --chown=www:www-data . /var/www
 RUN chmod -R ug+w /var/www/storage
 RUN chmod -R 777 /var/www
 # Copy nginx/php/supervisor configs
+COPY .env.example /var/www/.env
 RUN cp docker/supervisor.conf /etc/supervisord.conf
 RUN cp docker/php.ini /usr/local/etc/php/conf.d/app.ini
 RUN cp docker/nginx.conf /etc/nginx/sites-enabled/default
 
+COPY docker/run /usr/local/bin/run
+RUN chmod +x /usr/local/bin/run
 # PHP Error Log Files
 RUN mkdir /var/log/php
 RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
@@ -58,59 +61,7 @@ RUN touch /var/log/php/errors.log && chmod 777 /var/log/php/errors.log
 # Deployment steps
 RUN composer install --optimize-autoloader --no-dev
 RUN composer dump-autoload
-RUN chmod +x /var/www/docker/run.sh
-RUN cp .env.example /var/www/.env
+#RUN chmod +x /var/www/docker/run.sh
+
 EXPOSE 80
-ENTRYPOINT ["/var/www/docker/run.sh"]
-
-# FROM php:latest
-
-
-# RUN apt-get update \
-#     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor
-# # algunas configuraciones para que funcione el contenedor
-# RUN docker-php-ext-install pdo pdo_mysql
-
-# # instala composer en el contenedor
-# RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
-
-
-# WORKDIR /var/www/html/
-
-# # da permisos para editar los archivos en esta ruta del container
-# RUN chown -R www-data:www-data /var/www
-# RUN chmod 755 /var/www
-
-# COPY . /var/www/html/
-
-# COPY .env.example /var/www/html/.env
-# #run composer intalar vendor
-
-# ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# RUN composer install
-
-# CMD php artisan migrate:refresh
-
-# FROM php:fpm-buster
-
-# WORKDIR /var/www/html/laravel-theater
-# COPY . /var/www/html/laravel-theater/
-
-
-# COPY .env.example /var/www/html/laravel-theater/.env
-
-
-# # algunas configuraciones para que funcione el contenedor
-# RUN docker-php-ext-install pdo pdo_mysql
-
-# # instala composer en el contenedor
-# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# #run composer intalar vendor
-# RUN composer install
-
-# CMD php artisan migrate
-# # da permisos para editar los archivos en esta ruta del container
-# RUN chown -R www-data:www-data /var/www
-# RUN chmod 755 /var/www
+ENTRYPOINT ["run"]
