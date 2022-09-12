@@ -1,5 +1,21 @@
 version: '3.7'
 services:
+
+    mysql: # 2do servici
+            image: mysql:5.7 # imagen de docker hub
+            container_name: mysql # nombre de referencia del servicio
+            restart: always # si tiene algun problema, reinicialo
+            tty: true  # aqui si le fallo joven xD, 👀 leo los comentarios
+            ports:
+                - 33069:3306 # puerto local:puerto del servicio
+            volumes:
+                - ./docker/database:/var/lib/mysql # carpeta local:carpeta de config de mysql
+            environment: # datos de configuracion del entorno
+                MYSQL_DATABASE: laravel_theater  # importante que tengan comillas
+                MYSQL_ROOT_PASSWORD: secret.root
+            networks:
+                - default
+
     nginx:
         image: nginx:stable-alpine
         container_name: nginx # nombre para referirse al servicio
@@ -11,25 +27,10 @@ services:
             - .env.example:/var/www/.env # archivo env
             - /var/www/vendor
         depends_on:
-            - php
             - mysql
+            - php
         networks:
         - default
-
-    mysql: # 2do servici
-        image: mysql:5.7 # imagen de docker hub
-        container_name: mysql # nombre de referencia del servicio
-        restart: always # si tiene algun problema, reinicialo
-        tty: true  # aqui si le fallo joven xD, 👀 leo los comentarios
-        ports:
-            - 33069:3306 # puerto local:puerto del servicio
-        volumes:
-            - ./docker/database:/var/lib/mysql # carpeta local:carpeta de config de mysql
-        environment: # datos de configuracion del entorno
-            MYSQL_DATABASE: laravel_theater  # importante que tengan comillas
-            MYSQL_ROOT_PASSWORD: secret.root
-        networks:
-            - default
 
     php: # 3er servicio
         build: # este se construira aqui mismo
